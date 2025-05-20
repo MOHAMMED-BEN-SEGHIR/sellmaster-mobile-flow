@@ -7,13 +7,13 @@ import Header from '../components/Header';
 import { Card } from '../components/ui/card';
 import SideDrawer from '../components/SideDrawer';
 import BottomNavigation from '../components/BottomNavigation';
-import { useMobile } from '../hooks/use-mobile';
+import { useIsMobile } from '../hooks/use-mobile';
 import { getCurrencySymbol } from '../lib/utils';
 
 const DashboardPage = () => {
   const { state: authState } = useAuth();
   const navigate = useNavigate();
-  const { isMobile } = useMobile();
+  const { isMobile } = useIsMobile();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   
   // Demo data
@@ -73,7 +73,7 @@ const DashboardPage = () => {
 
   return (
     <div className="min-h-screen bg-app-dark text-white">
-      <SideDrawer isOpen={isDrawerOpen} onClose={toggleDrawer} />
+      <SideDrawer isOpen={isDrawerOpen} onClose={toggleDrawer} children={null} />
       
       <div className="flex flex-col h-screen">
         <Header 
@@ -146,10 +146,7 @@ const DashboardPage = () => {
         </main>
         
         {isMobile && (
-          <BottomNavigation
-            currentPath="/dashboard"
-            onNavigate={(path: string) => handleNavigate(path)}
-          />
+          <BottomNavigation currentPath="/dashboard" />
         )}
       </div>
     </div>

@@ -1,11 +1,9 @@
 
 // This file is needed for importing the toast functionality
 import { Toast } from "@/components/ui/toast";
-import { useToast as useToastOriginal } from "@radix-ui/react-toast";
+import { type ToastActionElement } from "@/components/ui/toast";
 
 type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>;
-
-type ToastActionElement = React.ReactElement<typeof Toast>;
 
 export interface ToastActionProps {
   altText?: string;
