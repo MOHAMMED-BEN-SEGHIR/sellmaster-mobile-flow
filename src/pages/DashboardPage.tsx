@@ -1,154 +1,157 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { BarChart, Calendar, Settings, Users } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 import Header from '../components/Header';
+import { Card } from '../components/ui/card';
 import SideDrawer from '../components/SideDrawer';
 import BottomNavigation from '../components/BottomNavigation';
-import { useAuth } from '../contexts/AuthContext';
-import { usePayment } from '../contexts/PaymentContext';
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
-import { formatCurrency } from '../utils/helpers';
-import { Calendar, CreditCard, TrendingUp, Wallet } from 'lucide-react';
+import { useMobile } from '../hooks/use-mobile';
+import { getCurrencySymbol } from '../lib/utils';
 
-const DashboardPage: React.FC = () => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+const DashboardPage = () => {
   const { state: authState } = useAuth();
-  const { state: paymentState } = usePayment();
+  const navigate = useNavigate();
+  const { isMobile } = useMobile();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   
+  // Demo data
+  const currentMonthPayments = 4850;
+  const lastMonthPayments = 3200;
+  const monthlyChange = ((currentMonthPayments - lastMonthPayments) / lastMonthPayments) * 100;
+  const upcomingDueCount = 3;
+  const activeCustomerCount = 12;
+  
+  const currencyCode = authState.user?.preferredCurrency || 'MAD';
+  const currencySymbol = getCurrencySymbol(currencyCode);
+
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
   
-  // Sample data for overview cards
-  const overviewData = [
+  const handleNavigate = (path: string) => {
+    navigate(path);
+  };
+  
+  const quickActions = [
     { 
-      title: 'Monthly Total', 
-      value: paymentState.monthData?.total || 0,
-      icon: <Wallet className="text-primary" size={24} />,
-      currency: true
+      name: 'Payments', 
+      icon: <Calendar size={28} className="text-primary" />,
+      onClick: () => navigate('/payments')
     },
     { 
-      title: 'This Week', 
-      value: paymentState.monthData?.weeks[0]?.total || 0,
-      icon: <Calendar className="text-accent-orange" size={24} />,
-      currency: true
+      name: 'Customers', 
+      icon: <Users size={28} className="text-primary" />,
+      onClick: () => {}
     },
     { 
-      title: 'Transactions', 
-      value: 24,
-      icon: <CreditCard className="text-accent-yellow" size={24} />,
-      currency: false
-    },
-    { 
-      title: 'Growth', 
-      value: '+15%',
-      icon: <TrendingUp className="text-green-500" size={24} />,
-      currency: false
-    },
+      name: 'Settings', 
+      icon: <Settings size={28} className="text-primary" />,
+      onClick: () => navigate('/settings')
+    }
   ];
   
-  // Prepare chart data
-  const chartData = paymentState.monthData?.weeks.map(week => ({
-    name: `Week ${week.weekNumber}`,
-    amount: week.total
-  })) || [];
-  
+  const stats = [
+    {
+      title: 'Monthly Income',
+      value: `${currencySymbol} ${currentMonthPayments.toLocaleString()}`,
+      change: monthlyChange.toFixed(1),
+      positive: monthlyChange > 0
+    },
+    {
+      title: 'Upcoming Payments',
+      value: upcomingDueCount.toString(),
+      label: 'Due soon'
+    },
+    {
+      title: 'Active Customers',
+      value: activeCustomerCount.toString(),
+      label: 'This month'
+    }
+  ];
+
   return (
-    <div className="bg-app-dark min-h-screen pb-20">
-      <Header 
-        title="Dashboard" 
-        onMenuToggle={toggleDrawer}
-      />
+    <div className="min-h-screen bg-app-dark text-white">
+      <SideDrawer isOpen={isDrawerOpen} onClose={toggleDrawer} />
       
-      <SideDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
-        <nav className="mt-4">
-          <ul>
-            <li className="mb-2">
-              <a href="#" className="block p-2 rounded hover:bg-app-lighter text-white">
-                Countries
-              </a>
-            </li>
-            <li className="mb-2">
-              <a href="#" className="block p-2 rounded hover:bg-app-lighter text-white">
-                Currencies
-              </a>
-            </li>
-            <li className="mb-2">
-              <a href="#" className="block p-2 rounded hover:bg-app-lighter text-white">
-                Languages
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </SideDrawer>
-      
-      <main className="p-4">
-        {/* User greeting */}
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-white">
-            Hello, {authState.user?.name || 'User'}
-          </h2>
-          <p className="text-gray-400">
-            Welcome to your dashboard
-          </p>
-        </div>
+      <div className="flex flex-col h-screen">
+        <Header 
+          title="Dashboard" 
+          onMenuToggle={toggleDrawer}
+        />
         
-        {/* Overview cards */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          {overviewData.map((item, index) => (
-            <div key={index} className="bg-app-card p-4 rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-gray-400 text-sm">{item.title}</h3>
-                {item.icon}
-              </div>
-              <p className="text-xl font-bold text-white">
-                {item.currency 
-                  ? formatCurrency(item.value, authState.user?.preferredCurrency || 'MAD')
-                  : item.value}
-              </p>
-            </div>
-          ))}
-        </div>
-        
-        {/* Chart */}
-        <div className="bg-app-card p-4 rounded-lg mb-6">
-          <h3 className="text-white font-bold mb-4">Weekly Overview</h3>
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
-                <XAxis dataKey="name" tick={{ fill: '#9ca3af' }} />
-                <YAxis tick={{ fill: '#9ca3af' }} />
-                <Tooltip 
-                  formatter={(value: number) => [
-                    formatCurrency(value, authState.user?.preferredCurrency || 'MAD'),
-                    'Amount'
-                  ]}
-                />
-                <Bar dataKey="amount" fill="#04be94" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-        
-        {/* Recent activity */}
-        <div className="bg-app-card p-4 rounded-lg">
-          <h3 className="text-white font-bold mb-4">Recent Activity</h3>
-          <div className="space-y-3">
-            {[1, 2, 3].map((_, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-app-lighter rounded-lg">
-                <div>
-                  <p className="text-white">Payment #{index + 1}</p>
-                  <p className="text-sm text-gray-400">Today at {10 + index}:00 AM</p>
-                </div>
-                <span className="text-primary font-medium">
-                  {formatCurrency(150 * (index + 1), authState.user?.preferredCurrency || 'MAD')}
-                </span>
-              </div>
+        <main className="flex-1 p-4 pb-16 overflow-y-auto">
+          {/* Welcome section */}
+          <section className="mb-6">
+            <h2 className="text-xl font-medium">
+              Welcome back, {authState.user?.name || 'User'}
+            </h2>
+            <p className="text-gray-400">
+              {authState.currentWorkspace?.name || 'Your workspace'}
+            </p>
+          </section>
+          
+          {/* Stats cards */}
+          <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            {stats.map((stat, index) => (
+              <Card key={index} className="bg-app-card p-4 border-none">
+                <h3 className="text-sm text-gray-400">{stat.title}</h3>
+                <p className="text-2xl font-medium mt-2">{stat.value}</p>
+                {stat.change && (
+                  <span className={`text-xs ${stat.positive ? 'text-green-500' : 'text-red-500'}`}>
+                    {stat.positive ? '+' : ''}{stat.change}%
+                  </span>
+                )}
+                {stat.label && (
+                  <span className="text-xs text-gray-400">
+                    {stat.label}
+                  </span>
+                )}
+              </Card>
             ))}
-          </div>
-        </div>
-      </main>
-      
-      <BottomNavigation />
+          </section>
+          
+          {/* Quick actions */}
+          <section className="mb-6">
+            <h3 className="text-lg mb-3">Quick Actions</h3>
+            <div className="grid grid-cols-3 gap-4">
+              {quickActions.map((action, index) => (
+                <Card 
+                  key={index} 
+                  className="bg-app-card border-none cursor-pointer hover:bg-opacity-80 transition-all"
+                  onClick={action.onClick}
+                >
+                  <div className="flex flex-col items-center p-4">
+                    {action.icon}
+                    <span className="mt-2 text-sm text-gray-300">{action.name}</span>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </section>
+          
+          {/* Chart placeholder */}
+          <section>
+            <Card className="bg-app-card p-4 border-none">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg">Payment Activity</h3>
+                <span className="text-xs text-gray-400">Last 30 days</span>
+              </div>
+              <div className="flex items-center justify-center h-48 bg-app-lighter rounded-md">
+                <BarChart size={32} className="text-gray-500" />
+              </div>
+            </Card>
+          </section>
+        </main>
+        
+        {isMobile && (
+          <BottomNavigation
+            currentPath="/dashboard"
+            onNavigate={(path: string) => handleNavigate(path)}
+          />
+        )}
+      </div>
     </div>
   );
 };
