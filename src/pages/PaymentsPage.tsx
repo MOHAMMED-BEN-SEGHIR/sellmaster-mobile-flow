@@ -13,11 +13,6 @@ import { generateId } from '../utils/helpers';
 const PaymentsPage: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [toastState, setToastState] = useState<{ show: boolean; message: string; type: 'success' | 'error' | 'info' }>({
-    show: false,
-    message: '',
-    type: 'success',
-  });
   
   const { state: authState } = useAuth();
   const { 
@@ -57,14 +52,7 @@ const PaymentsPage: React.FC = () => {
       workspaceId: authState.currentWorkspace.id,
     });
     
-    // Show toast
-    setToastState({
-      show: true,
-      message: 'Payment added successfully',
-      type: 'success',
-    });
-    
-    // Use the shadcn/ui toast as well
+    // Use the shadcn/ui toast
     toast({
       title: "Success",
       description: "Payment added successfully",
@@ -76,14 +64,7 @@ const PaymentsPage: React.FC = () => {
   const handleUpdatePayment = (weekIndex: number, dayIndex: number, paymentId: string, amount: number, description?: string) => {
     updatePayment(weekIndex, dayIndex, paymentId, { amount, description });
     
-    // Show toast
-    setToastState({
-      show: true,
-      message: 'Payment updated successfully',
-      type: 'success',
-    });
-    
-    // Use the shadcn/ui toast as well
+    // Use the shadcn/ui toast
     toast({
       title: "Success",
       description: "Payment updated successfully",
@@ -95,14 +76,7 @@ const PaymentsPage: React.FC = () => {
   const handleDeletePayment = (weekIndex: number, dayIndex: number, paymentId: string) => {
     deletePayment(weekIndex, dayIndex, paymentId);
     
-    // Show toast
-    setToastState({
-      show: true,
-      message: 'Payment deleted successfully',
-      type: 'info',
-    });
-    
-    // Use the shadcn/ui toast as well
+    // Use the shadcn/ui toast
     toast({
       title: "Info",
       description: "Payment deleted successfully",
@@ -223,15 +197,6 @@ const PaymentsPage: React.FC = () => {
       </div>
       
       <BottomNavigation />
-      
-      {/* Toast notification */}
-      {toast.show && (
-        <Toast 
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast({ ...toast, show: false })}
-        />
-      )}
     </div>
   );
 };

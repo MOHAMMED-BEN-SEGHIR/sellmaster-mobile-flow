@@ -13,7 +13,7 @@ import { getCurrencySymbol } from '../lib/utils';
 const DashboardPage = () => {
   const { state: authState } = useAuth();
   const navigate = useNavigate();
-  const { isMobile } = useIsMobile();
+  const isMobile = useIsMobile();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   
   // Demo data

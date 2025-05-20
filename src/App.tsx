@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { PaymentProvider } from "./contexts/PaymentContext";
+import { Toaster } from "./components/ui/toaster";
 
 // Pages
 import DashboardPage from "./pages/DashboardPage";
@@ -56,6 +57,7 @@ const App = () => (
         <AuthProvider>
           <PaymentProvider>
             <AppRoutes />
+            <Toaster />
           </PaymentProvider>
         </AuthProvider>
       </ThemeProvider>
