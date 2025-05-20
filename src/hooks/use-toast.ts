@@ -1,5 +1,6 @@
 
 // This file is needed for importing the toast functionality
+import * as React from "react";
 import { Toast } from "@/components/ui/toast";
 import { type ToastActionElement } from "@/components/ui/toast";
 
@@ -51,7 +52,7 @@ export function toast({
   const newToast: ToasterToast = {
     id,
     title,
-    description: description as React.ReactNode,
+    description,
     ...props,
   };
 

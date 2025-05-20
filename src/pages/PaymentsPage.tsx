@@ -5,7 +5,7 @@ import SideDrawer from '../components/SideDrawer';
 import BottomNavigation from '../components/BottomNavigation';
 import MonthPicker from '../components/MonthPicker';
 import WeekAccordion from '../components/WeekAccordion';
-import Toast from '../components/Toast';
+import { toast } from "@/hooks/use-toast";
 import { usePayment } from '../contexts/PaymentContext';
 import { useAuth } from '../contexts/AuthContext';
 import { generateId } from '../utils/helpers';
@@ -13,7 +13,7 @@ import { generateId } from '../utils/helpers';
 const PaymentsPage: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [toast, setToast] = useState<{ show: boolean; message: string; type: 'success' | 'error' | 'info' }>({
+  const [toastState, setToastState] = useState<{ show: boolean; message: string; type: 'success' | 'error' | 'info' }>({
     show: false,
     message: '',
     type: 'success',
@@ -58,10 +58,17 @@ const PaymentsPage: React.FC = () => {
     });
     
     // Show toast
-    setToast({
+    setToastState({
       show: true,
       message: 'Payment added successfully',
       type: 'success',
+    });
+    
+    // Use the shadcn/ui toast as well
+    toast({
+      title: "Success",
+      description: "Payment added successfully",
+      variant: "default", 
     });
   };
 
@@ -70,10 +77,17 @@ const PaymentsPage: React.FC = () => {
     updatePayment(weekIndex, dayIndex, paymentId, { amount, description });
     
     // Show toast
-    setToast({
+    setToastState({
       show: true,
       message: 'Payment updated successfully',
       type: 'success',
+    });
+    
+    // Use the shadcn/ui toast as well
+    toast({
+      title: "Success",
+      description: "Payment updated successfully",
+      variant: "default",
     });
   };
 
@@ -82,10 +96,17 @@ const PaymentsPage: React.FC = () => {
     deletePayment(weekIndex, dayIndex, paymentId);
     
     // Show toast
-    setToast({
+    setToastState({
       show: true,
       message: 'Payment deleted successfully',
       type: 'info',
+    });
+    
+    // Use the shadcn/ui toast as well
+    toast({
+      title: "Info",
+      description: "Payment deleted successfully",
+      variant: "default",
     });
   };
   
