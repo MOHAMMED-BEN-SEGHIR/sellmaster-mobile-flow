@@ -51,7 +51,7 @@ export function toast({
   const newToast: ToasterToast = {
     id,
     title,
-    description,
+    description: description as React.ReactNode,
     ...props,
   };
 

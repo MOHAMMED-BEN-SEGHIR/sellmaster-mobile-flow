@@ -146,7 +146,7 @@ const DashboardPage = () => {
         </main>
         
         {isMobile && (
-          <BottomNavigation currentPath="/dashboard" />
+          <BottomNavigation />
         )}
       </div>
     </div>

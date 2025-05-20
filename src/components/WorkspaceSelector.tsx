@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Workspace } from '../types';
-import { ChevronDown, Check, Buildings } from 'lucide-react';
+import { ChevronDown, Check, Building } from 'lucide-react';
 
 const WorkspaceSelector: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,7 +24,7 @@ const WorkspaceSelector: React.FC = () => {
         onClick={toggleDropdown}
       >
         <div className="flex items-center">
-          <Buildings className="mr-2 text-primary" size={18} />
+          <Building className="mr-2 text-primary" size={18} />
           <span className="font-medium">
             {authState.currentWorkspace?.name || 'Select Workspace'}
           </span>
